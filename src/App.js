@@ -8,6 +8,8 @@ import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.com
 import { firebaseAuth, createUserProfileDoc } from './firebase/firebase.utils';
 import { onSnapshot, getDoc } from "firebase/firestore";
 import React from 'react';
+import { connect } from 'react-redux';
+import { setCurrentUser } from './redux/user/user-actions';
 
 
 /* const HatsPage = () => (
@@ -17,17 +19,19 @@ import React from 'react';
 ) */
 
 class App extends React.Component{
-  constructor(){
+  /* constructor(){
     super();
 
     this.state = {
       currentUser: null
     }
-  }
+  } */
 
   unsubscribeFromAuth = null;
 
   componentDidMount(){
+    const { setCurrentUser } = this.props;
+    
     this.unsubscribeFromAuth = firebaseAuth.onAuthStateChanged(async userAuth => {
       // this.setState({currentUser: userAuth});
       // console.log(userAuth)
@@ -43,18 +47,23 @@ class App extends React.Component{
           }
         }) */
         onSnapshot(userRef, (snapshot) => {
-          this.setState({
+          /* this.setState({
             currentUser: {
               id: snapshot.id,
               ...snapshot.data()
             }
           }, () => {
             console.log(this.state.currentUser)
+          }) */
+          setCurrentUser({
+            id: snapshot.id,
+            ...snapshot.data()
           })
         })
       }
 
-      this.setState({currentUser: userAuth}) // When userAuth not set, it returns null
+      // this.setState({currentUser: userAuth}) // When userAuth not set, it returns null
+      setCurrentUser(userAuth) // When userAuth not set, it returns null
     })
   }
 
@@ -67,7 +76,8 @@ class App extends React.Component{
       <div>
         {/* <HomePage /> */}
         {/* This stays here because we need it to always show regardless of what page is active by the Routes */}
-        <Header currUser={this.state.currentUser} />
+        {/* <Header currUser={this.state.currentUser} /> */}
+        <Header />
         <Routes>
             {/* exact, exact={true/false} or completely taken off */}
             <Route exact path='/' element={<HomePage />} />
@@ -80,4 +90,9 @@ class App extends React.Component{
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+})
+
+// export default App;
+export default connect(null, mapDispatchToProps)(App);
