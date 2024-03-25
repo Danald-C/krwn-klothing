@@ -5,7 +5,7 @@ import {ReactComponent as Logo} from '../../assets/crown.svg.svg'
 import { firebaseAuth } from '../../firebase/firebase.utils';
 import { connect } from 'react-redux';
 
-const Header = ({currUser}) => (
+const Header = ({thisUser}) => (
     <div className='header'>
         <Link className='logo-container' to='/'>
             <Logo className='logo' />
@@ -14,15 +14,20 @@ const Header = ({currUser}) => (
             <Link className='option' to='/shop'>SHOP</Link>
             <Link className='option' to='/contact'>CONTACT</Link>
             {
-                currUser ? (<div className='option' onClick={() => firebaseAuth.signOut()}>SIGN OUT</div>) : (<Link className='option' to='/signin'>SIGN IN</Link>)
+                thisUser ? (<div className='option' onClick={() => firebaseAuth.signOut()}>SIGN OUT</div>) : (<Link className='option' to='/signin'>SIGN IN</Link>)
             }
         </div>
     </div>
 )
 
-const mapStateToProps = state => ({
-    currUser: state.user.currUser
+// mapStateToProps is the ideal name to use
+const getDataFromReducer = state => ({
+    // currUser is the same property passed into the header as an argument
+    // currUser: state.user.currUser
+    thisUser: state.user.currUser // Connect() will pass this prop thisUser to the specified component
 })
 
 // export default Header;
-export default connect(mapStateToProps, null)(Header);
+// Go up the Reducer, get the property (on its state) needed to be passed into the header as an argument
+// Now we can cut the original supply in App.js and get it directly from the Reducer
+export default connect(getDataFromReducer, null)(Header); // Arg 1 is getting data, Arg 2 is setting

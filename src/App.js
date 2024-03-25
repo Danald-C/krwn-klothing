@@ -1,5 +1,5 @@
 import './App.css';
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, Redirect} from 'react-router-dom'
 
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
@@ -30,7 +30,8 @@ class App extends React.Component{
   unsubscribeFromAuth = null;
 
   componentDidMount(){
-    const { setCurrentUser } = this.props;
+    // const { setCurrentUser } = this.props;
+    const { newUser } = this.props;
     
     this.unsubscribeFromAuth = firebaseAuth.onAuthStateChanged(async userAuth => {
       // this.setState({currentUser: userAuth});
@@ -55,7 +56,7 @@ class App extends React.Component{
           }, () => {
             console.log(this.state.currentUser)
           }) */
-          setCurrentUser({
+          newUser({
             id: snapshot.id,
             ...snapshot.data()
           })
@@ -63,7 +64,7 @@ class App extends React.Component{
       }
 
       // this.setState({currentUser: userAuth}) // When userAuth not set, it returns null
-      setCurrentUser(userAuth) // When userAuth not set, it returns null
+      newUser(userAuth) // When userAuth not set, it returns null
     })
   }
 
@@ -82,7 +83,8 @@ class App extends React.Component{
             {/* exact, exact={true/false} or completely taken off */}
             <Route exact path='/' element={<HomePage />} />
             <Route path='/shop' element={<ShopPage />} />
-            <Route path='/signin' element={<SignInAndSignUp />} />
+            {/* <Route path='/signin' element={<SignInAndSignUp />} /> */}
+            <Route exact path='/signin' render={() => this.props.thisUser ? (<Redirect to='/' />) : (<SignInAndSignUp />)} />
             {/* <Route path='/hats' element={<HatsPage />} /> */}
         </Routes>
       </div>
@@ -90,9 +92,20 @@ class App extends React.Component{
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+// mapStateToProps is the ideal name to use
+const getDataFromReducer = ({ user }) => ({
+  thisUser: user.currUser // Connect() will pass this prop thisUser to the specified component
+})
+
+// mapDispatchToProps is the ideal name to use
+// const sendDataToReducer = dispatch => ({
+const sendDataToReducer = setData => ({
+  // setCurrentUser: user => dispatch(setCurrentUser(user))
+  newUser: uData => setData(setCurrentUser(uData)) // This whole line is a function. uData is incoming arg data. Whenever we call newUser (call it as newUser(data) because it points to a function), uData is passed in it as an argument. In that function we also call setData() (provided by connect()) which also passes setCurrentUser (which returns an object) as an arg which also expects uData
 })
 
 // export default App;
-export default connect(null, mapDispatchToProps)(App);
+// connect() after processing Reducer puts results into newUser prop & then hands it over to the State's props 'this.props.newUser'
+// Because it point to a function, we always call it as a function newUser(data)
+// Connect() is telling sendDataToReducer to always listen to App because App will call a property 'newUser' it contains
+export default connect(getDataFromReducer, sendDataToReducer)(App);
