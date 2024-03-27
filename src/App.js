@@ -1,5 +1,5 @@
 import './App.css';
-import {Routes, Route, Redirect} from 'react-router-dom'
+import {Routes, Route, Navigate} from 'react-router-dom'
 
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
@@ -84,7 +84,8 @@ class App extends React.Component{
             <Route exact path='/' element={<HomePage />} />
             <Route path='/shop' element={<ShopPage />} />
             {/* <Route path='/signin' element={<SignInAndSignUp />} /> */}
-            <Route exact path='/signin' render={() => this.props.thisUser ? (<Redirect to='/' />) : (<SignInAndSignUp />)} />
+            {/* <Route path='/signin' render={() => this.props.thisUser ? (<Navigate to='/' />) : (<SignInAndSignUp />)} /> */}
+            <Route exact path='/signin' element={this.props.thisUser ? (<Navigate to='/' />) : (<SignInAndSignUp />)} />
             {/* <Route path='/hats' element={<HatsPage />} /> */}
         </Routes>
       </div>
@@ -93,8 +94,8 @@ class App extends React.Component{
 }
 
 // mapStateToProps is the ideal name to use
-const getDataFromReducer = ({ user }) => ({
-  thisUser: user.currUser // Connect() will pass this prop thisUser to the specified component
+const getDataFromReducer = ({ user: { currUser } }) => ({
+  thisUser: currUser // Connect() will pass this prop thisUser to the specified component
 })
 
 // mapDispatchToProps is the ideal name to use

@@ -2,10 +2,12 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import './header.styles.css'
 import {ReactComponent as Logo} from '../../assets/crown.svg.svg'
+import CartIcon from '../cart-icon/cart-icon.component'
+import CartDropdown from '../cart-dropdown/cart-dropdown.component'
 import { firebaseAuth } from '../../firebase/firebase.utils';
 import { connect } from 'react-redux';
 
-const Header = ({thisUser}) => (
+const Header = ({thisUser, cartState}) => (
     <div className='header'>
         <Link className='logo-container' to='/'>
             <Logo className='logo' />
@@ -16,15 +18,20 @@ const Header = ({thisUser}) => (
             {
                 thisUser ? (<div className='option' onClick={() => firebaseAuth.signOut()}>SIGN OUT</div>) : (<Link className='option' to='/signin'>SIGN IN</Link>)
             }
+            <CartIcon />
         </div>
+        { cartState ? null : <CartDropdown /> }
     </div>
 )
 
 // mapStateToProps is the ideal name to use
-const getDataFromReducer = state => ({
-    // currUser is the same property passed into the header as an argument
-    // currUser: state.user.currUser
-    thisUser: state.user.currUser // Connect() will pass this prop thisUser to the specified component
+// const getDataFromReducer = state => ({
+const getDataFromReducer = ({user: { currUser }, cart: { hidden }}) => ({
+    // thisUser is the same property passed into the header as an argument
+    // thisUser: state.user.currUser, // Connect() will pass this prop thisUser to the specified component
+    thisUser: currUser, // Connect() will pass this prop thisUser to the specified component
+    // thisUser: state.cart.hidden, // Connect() will pass this prop thisUser to the specified component
+    cartState: hidden
 })
 
 // export default Header;
