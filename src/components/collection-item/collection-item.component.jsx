@@ -6,7 +6,7 @@ import './collection-item.styles.css'
 
 // const CollectionItem = ({id, name, price, imageUrl}) => (
 const CollectionItem = ({item, thisCartItem}) => {
-    const {id, name, price, imageUrl} = item;
+    const {name, price, imageUrl} = item;
     return (
     <div className='collection-item'>
         <div className='image' style={{backgroundImage: `url(${imageUrl})`}} />
