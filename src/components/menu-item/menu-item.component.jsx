@@ -3,11 +3,11 @@ import './menu-item.styles.css'
 import {useLocation, useNavigate, useParams} from 'react-router-dom'
 
 // const MenuItem = ({title, imgUrl, size, linkUrl}) => (
-const MenuItem = ({title, imgUrl, size, history, linkUrl, match}) => (
+const MenuItem = ({title, imageUrl, size, history, linkUrl, match}) => (
     // <div className={`${size} menu-item`}>
     <div className={`${size} menu-item`} onClick={() => history.push(`${match.url}${linkUrl}`)}>
-        <div className='background-image' style={{backgroundImage: `url(${imgUrl})` }} />
-        <div className='content background-image'>
+        <div className='background-image' style={{backgroundImage: `url(${imageUrl})` }} />
+        <div className='content'>
             <h2>{title.toUpperCase()}</h2>
             <span>SHOP NOW</span>
         </div>
@@ -19,7 +19,7 @@ function withRouter(Component){
         let location = useLocation();
         let navigate = useNavigate();
         let params = useParams();
-        console.log(props)
+        // console.log(props)
 
         return(
             <Component {...props} router={{location, navigate, params}} />
