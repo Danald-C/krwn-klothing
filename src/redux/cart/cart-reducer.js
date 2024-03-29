@@ -1,5 +1,5 @@
 import { cartActionTypes } from "./cart-types";
-import { filterCartItems } from "./car-utils";
+import { filterCartItems } from "./cart-utils";
 
 const INIT_STATE = {
     hidden: true,
